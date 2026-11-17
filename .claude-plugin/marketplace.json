@@ -1,0 +1,15 @@
+{
+  "name": "torbox-skills",
+  "description": "Agent skills from TorBox for working with the TorBox service.",
+  "owner": {
+    "name": "TorBox",
+    "url": "https://torbox.app"
+  },
+  "plugins": [
+    {
+      "name": "torbox",
+      "source": "./",
+      "description": "Teaches your agent to use the TorBox API: add torrents, usenet and web downloads, check the cache, get download links, and handle error codes and rate limits."
+    }
+  ]
+}
