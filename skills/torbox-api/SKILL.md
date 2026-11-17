@@ -16,7 +16,7 @@ Official reference: https://api-docs.torbox.app/ (machine-readable spec: https:/
 3. **Show the user `detail`.** Every response carries a human-readable `detail` string written for end users. Relay it instead of paraphrasing the error code.
 4. **Protect the API key.** It grants full account access. Never print it, log it, or put it in anything the user will share. Download links and permalinks embed the key or an account token (see "Download links"), so treat those as secrets too.
 5. **Confirm before destructive calls.** Ask the user first for any `delete` operation, anything with `all: true`, clearing notifications, and resetting the usenet password.
-6. **Be gentle with the API.** Respect the rate limits, use `bypass_cache` sparingly, prefer permalinks over repeated link requests, and never retry a rejected request unchanged.
+6. **Be gentle with the API.** Respect the rate limits, use `bypass_cache` sparingly, prefer permalinks over repeated link requests, and retry only as the retry policy allows.
 
 ## MCP server
 
@@ -24,7 +24,7 @@ TorBox has an official MCP server at `https://api.torbox.app/mcp`. It exposes To
 
 - **Check your tool list before building HTTP requests.** If TorBox MCP tools are connected in this session, you can use them to act on the user's account.
 - **If they are not connected, tell the user once** that the server exists and can be added in their client's MCP settings with the URL above. Then carry on with the HTTP API as described below. Do not wait for them to add it.
-- The server requires the user to sign in to TorBox when it is connected.
+- The server needs a TorBox login. The user's API key works: send it as `Authorization: Bearer <API_KEY>`, the same header the HTTP API uses. A client can also sign the user in to TorBox when the server is connected.
 - The ground rules above apply to MCP tool calls too, including confirming destructive operations.
 - Code or scripts you write for the user still call the HTTP API as the rest of this skill describes.
 
@@ -66,7 +66,7 @@ All responses are JSON except file downloads (torrent files, PDFs) and RSS feeds
 | 409 | `NOT_OWNER` |
 | 422 | Validation error. `detail` is an array of `{loc, msg, type}` naming the bad field |
 | 429 | Rate limited. Wait before retrying |
-| 500 | Often a TorBox-side failure, but check `error` (ground rule 1) |
+| 500 | Often a TorBox-side failure, but check `error` (ground rule 1). Retry up to 3 times (see "Retry policy") |
 
 ### Request body formats (common mistake)
 
@@ -330,9 +330,10 @@ These are account limits, not bugs. Do not retry in a loop. Explain the limit to
 
 ### Retry policy
 
-- **Request and plan errors**: do not retry unchanged. Fix the request or tell the user.
+- **Any HTTP 500**: retry up to 3 times with growing waits (2s, 5s, 15s), whatever the `error` code is. Never more than 3. Then stop and give the user the `detail`.
+- **`_ERROR` codes with any other status**: the same, up to 3 retries.
+- **Request and plan errors that are not HTTP 500**: do not retry unchanged. Fix the request or tell the user.
 - **HTTP 429**: wait (for creates, the hourly window may need to pass), then retry.
-- **`_ERROR` codes**: retry up to 3 times with growing waits (2s, 5s, 15s). Then stop and report.
 - **HTTP 502 or no JSON body**: the API itself may be down. `GET https://api.torbox.app/` checks it. Status page: https://status.torbox.app
 
 ## Other endpoints

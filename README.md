@@ -6,9 +6,10 @@ Each skill is a folder with a `SKILL.md` file in the open [Agent Skills](https:/
 
 ## Skills
 
-| Skill                                      | What the agent learns                                                                                                                            |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`torbox-api`](skills/torbox-api/SKILL.md) | How to call the TorBox API: add torrents, usenet and web downloads, check the cache, get download links, and handle error codes and rate limits. |
+| Skill                                            | What the agent learns                                                                                                                            |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`torbox-api`](skills/torbox-api/SKILL.md)       | How to call the TorBox API: add torrents, usenet and web downloads, check the cache, get download links, and handle error codes and rate limits. |
+| [`torbox-webdav`](skills/torbox-webdav/SKILL.md) | How to use TorBox WebDAV: connect a client or media player, list and download files, and fix login problems and missing or stale files.          |
 
 ## Install in Claude Code
 
@@ -78,6 +79,8 @@ To have Claude Code do this for you, run `/plugin`, open **Marketplaces**, and e
   plugin.json           the torbox plugin
 skills/
   torbox-api/
+    SKILL.md
+  torbox-webdav/
     SKILL.md
 .github/
   scripts/validate_skills.py
