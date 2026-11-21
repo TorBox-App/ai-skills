@@ -334,7 +334,7 @@ These are account limits, not bugs. Do not retry in a loop. Explain the limit to
 - **`_ERROR` codes with any other status**: the same, up to 3 retries.
 - **Request and plan errors that are not HTTP 500**: do not retry unchanged. Fix the request or tell the user.
 - **HTTP 429**: wait (for creates, the hourly window may need to pass), then retry.
-- **HTTP 502 or no JSON body**: the API itself may be down. `GET https://api.torbox.app/` checks it. Status page: https://status.torbox.app
+- **HTTP 502 or no JSON body**: the API itself may be down. `GET https://api.torbox.app/` checks it. Status page: https://status.torbox.app (as JSON: https://status.torbox.app/index.json)
 
 ## Other endpoints
 
@@ -404,7 +404,8 @@ For the best performance when playing video, request a normal download link (see
 
 ### Service info (no auth)
 
-- `GET /` (is the API up), `GET /v1/api/stats`, `GET /v1/api/changelogs/json?offset=0&limit=10`, `GET /v1/api/speedtest`.
+- `GET /` (is the API up), `GET /v1/api/stats`, `GET /v1/api/changelogs/json?offset=0&limit=10`.
+- `GET /v1/api/speedtest?user_ip=<the user's public IP>`: speed test files, one per CDN region, with the nearest marked `closest`. Always pass the user's public IP. Without it, `closest` is the server nearest to you, not to the user. If you do not have their IP, follow the speed test procedure in the `torbox-troubleshooting` skill. If that skill is not installed, tell the user you cannot get a speed test for them and send them to https://torbox.app/speedtest.
 
 ## No search
 
